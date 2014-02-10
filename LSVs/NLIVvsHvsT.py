@@ -7,6 +7,9 @@ from Stoner.Folders import DataFolder
 import Stoner.Analysis as Analysis
 import scipy.optimize
 
+import Stoner.PlotFormats as SPF
+import Stoner.Plot as SP
+
 fig_width_pt = 800.0 # Get this from LaTeX using \showthe\columnwidth
 inches_per_pt = 1.0/72.27               # Convert pt to inch
 golden_mean = (numpy.sqrt(5)-1.0)/2.0         # Aesthetic ratio
@@ -64,7 +67,43 @@ def IV_group_Avg(folder,keys):
 
 
 
+#################### NORM DELTA R VS TEMP ####################
 
+def NormDeltaRvT(folder,keys):
+  if folder[0]['IVtemp']<250 and folder[0]['IVtemp']>5:
+    APiterator = [5,10]
+    AP = Analysis.AnalyseFile()
+    P = Analysis.AnalyseFile()
+    tsum = 0.0
+    for f in folder:
+      if f['iterator'] in APiterator:
+        AP.add_column(f.column('Voltage'),str(f['iterator']))
+      else:
+        P.add_column(f.column('Voltage'),str(f['iterator']))
+      tsum = tsum + f['Sample Temp']
+      
+    AP.apply(func,0,replace=False,header='Mean NLV')
+    AP.add_column(f.Current,column_header = 'Current')
+    P.apply(func,0,replace=False,header='Mean NLV')
+    P.add_column(f.Current,column_header = 'Current')
+    
+    APfit= AP.curve_fit(quad,'Current','Mean NLV',bounds=lambda x,y:x,result=True,header='Fit',asrow=True)
+    Pfit = P.curve_fit(quad,'Current','Mean NLV',bounds=lambda x,y:x,result=True,header='Fit',asrow=True)
+    
+    DeltaR = Pfit[2] - APfit[2]
+    ErrDeltaR = numpy.sqrt((Pfit[3]**2)+(APfit[3]**2))
+    Spinsig.append(DeltaR/Res_Cu(tsum/10))
+    Spinsig_error.append(ErrDeltaR)
+    
+    Temp.append(tsum/10)
+    
+    plt.hold(True)
+    plt.title('$\Delta$R$_s$ vs T from linear coef of\nNLIV fit for '+f['Sample ID'],verticalalignment='bottom')
+    plt.xlabel('Temperture (K)')
+    plt.ylabel(r'$\Delta$R$_s$/$\rho$')
+    plt.errorbar(f['IVtemp'],1e3*DeltaR,1e3*ErrDeltaR,ecolor='k',marker='o',mfc='r', mec='k')
+    #plt.plot(f['IVtemp'],ErrDeltaR,'ok')
+    return Temp, Spinsig
 
 
 #################### DELTA R VS TEMP ####################
@@ -291,6 +330,50 @@ def DeltaBetavT(folder,keys):
 
   #################### AP AND P BETA COEF VS TEMP ####################
   
+def NormBetavsT(folder,keys):
+    
+  if folder[0]['Sample ID'] == 'SC004_2_T':
+    tsum = 0.0
+    avg = Analysis.AnalyseFile()
+    for f in folder:
+      avg.add_column(f.Voltage,str(f['iterator']))  
+      tsum = tsum + f['Sample Temp']
+      
+    avg.apply(func,0,replace=False,header='Mean NLV')
+    avg.add_column(f.Current,'Current') 
+    fit= avg.curve_fit(quad,'Current','Mean NLV',bounds=lambda x,y:x,result=True,header='Fit',asrow=True)
+      
+    beta.append(fit[0]/Inj_2(tsum/10))
+    betaerr.append(fit[1])
+    Temp.append(tsum/10)
+    print folder[0]['Sample ID']
+  else:
+    tsum = 0.0
+    avg = Analysis.AnalyseFile()
+    for f in folder:
+      avg.add_column(f.Voltage,str(f['iterator']))  
+      tsum = tsum + f['Sample Temp']
+      
+    avg.apply(func,0,replace=False,header='Mean NLV')
+    avg.add_column(f.Current,'Current') 
+    fit= avg.curve_fit(quad,'Current','Mean NLV',bounds=lambda x,y:x,result=True,header='Fit',asrow=True)
+      
+    beta.append(fit[0]/Inj_6(tsum/10))
+    betaerr.append(fit[1])
+    Temp.append(tsum/10)
+    
+  title = r'$\beta$/inj resistance coef of NLIV vs Temp for ' + f['Sample ID']
+  return title  
+  '''
+  plt.hold(True)
+  plt.title(r'$\beta$ coef of NLIV vs Temp for ' + f['Sample ID'],verticalalignment='bottom')
+  plt.xlabel('Temperture (K)',labelpad=10)
+  plt.ylabel(r'$\beta$ (V/A$^2$)',labelpad=10)
+  plt.errorbar(f['IVtemp'],fit[0],fit[1],ecolor='k',marker='o',mfc='r', mec='k')
+  '''
+
+  #################### AP AND P BETA COEF VS TEMP ####################
+  
 def BetavsT(folder,keys):
   tsum = 0.0
   avg = Analysis.AnalyseFile()
@@ -433,13 +516,20 @@ K_Si = numpy.array([[0.0,0.0],
 [279.612595,1.342087],
 [305.239520,1.390936]])
 
-CuRvt = Stoner.DataFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/SC004_3_T/SC004_3_T_6221-2182 DC IV_Timed interval_RvT_CuBar_100uA_!0001.txt')
+InjRvT_2_T = Stoner.DataFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/Reference Data/Injector Resistance/SC004_2_T_6221-2182 DC IV_Timed interval_0_3K_PyInj_RvsT_300uA_.txt')
+InjRvT_2_T.sort('Sample Temp')
+InjRvT_6_T = Stoner.DataFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/Reference Data/Injector Resistance/SC004_6_T_6221-2182 DC IV_Timed interval_0_RvT_PyInj_100uA_.txt')
+InjRvT_6_T.sort('Sample Temp')
+CuRvt = Stoner.DataFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/Reference Data/Cu spacer resistance/Resistivity/SC004_2_T_Cu_resistivity_vs_T.txt')
 PyRvt = Stoner.DataFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/SC004_3_T/SC004_3_T_6221-2182 DC IV_Timed interval_0_PyInj_RvT_100uA_Full.txt')
 PyRvt.sort('Sample Temp')
+CuRvt.sort('T (K)')
 NewK_Cu = interpolate.interp1d(K_Cu[:,0],K_Cu[:,1])
 NewK_Si = interpolate.interp1d(K_Si[:,0],K_Si[:,1])
-Res_Cu = interpolate.interp1d(CuRvt[:,3],CuRvt[:,2])
+Res_Cu = interpolate.interp1d(CuRvt[:,4],CuRvt[:,2])
 Res_Py = interpolate.interp1d(PyRvt[:,3],PyRvt[:,2])
+Inj_2 = interpolate.interp1d(PyRvt[:,3],PyRvt[:,2])
+Inj_6 = interpolate.interp1d(PyRvt[:,3],PyRvt[:,2])
 
 Acu = 130e-9*150e-9
 Asi = 150e-9*18e-6
@@ -455,7 +545,7 @@ dx = 500e-9
 #################### IMPORTDATA AND WALK GROUPS ####################
 
 pattern = re.compile('_(?P<state>\d*)_(?P<IVtemp>\d*)K_(?P<Inj>\w*)_NLIV_300uA_')
-folder = DataFolder('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/SC004_2_T/NLIVvsHvsT_Py_Inj',pattern = pattern)
+folder = DataFolder('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/SC004_8_B/NLIVvsHvsT_Py_Inj',pattern = pattern)
 #folder.group(['IVtemp','Inj'])
 
 print folder
@@ -466,15 +556,16 @@ beta = []
 betaerr = []
 Temp = []
 Output = Stoner.DataFile()
-print folder[0]
 Output['Sample ID'] = folder[0]['Sample ID']
 folder.group('IVtemp')
 
 #folder.walk_groups(Heat,group=True,replace_terminal=True)
 #folder.walk_groups(DeltaRvT,group=True,replace_terminal=True)
+#folder.walk_groups(NormDeltaRvT,group=True,replace_terminal=True)
 #folder.walk_groups(DeltaR_Background_vT,group=True,replace_terminal=True)
 #folder.walk_groups(DeltaBetavT,group=True,replace_terminal=True)
-folder.walk_groups(BetavsT,group=True,replace_terminal=True)
+#folder.walk_groups(BetavsT,group=True,replace_terminal=True)
+folder.walk_groups(NormBetavsT,group=True,replace_terminal=True)
 #folder.walk_groups(BetavsT_AP_P,group=True,replace_terminal=True)
 #folder.walk_groups(RsvT,group=True,replace_terminal=True)
 #folder.walk_groups(AvgIVplot,group=True,replace_terminal=True)
@@ -489,12 +580,16 @@ Output.add_column(betaerr,column_header='Beta err')
 Output.add_column(Temp,column_header='Sample Temp')
 
 Output.sort('Sample Temp')
-print Output
-#Output.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/DeltaR_vs_Sep/' + Output['Sample ID'] + '_DeltaRvsT.txt')
-#Output.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/Beta_vs_Sep/' + Output['Sample ID'] + '_BetavsT.txt')
+print Output.data
+#Output.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/DeltaR_vs_Sep/' + Output['Sample ID'] + '_NormDeltaRvsT.txt')
+Output.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/Beta_vs_Sep/' + Output['Sample ID'] + '_NormBetavsT.txt')
 #Output.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/RsBackground_vs_Sep/' + Output['Sample ID'] + '_Rs_Background_vsT.txt')
-plt.tight_layout(pad=0.1, w_pad=0.0, h_pad=0.0)
-plt.show()
-
+#plt.tight_layout(pad=0.1, w_pad=0.0, h_pad=0.0)
+#plt.show()
+p=SP.PlotFile(Output)
+p.setas="y.x"
+p.template=SPF.DefaultPlotStyle
+#title = r'$\Delta$R$_s$/$\rho$ vs temperature'
+p.plot(label=p['Sample ID'],figure=1,title=title)
 
 

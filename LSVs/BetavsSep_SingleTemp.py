@@ -198,8 +198,8 @@ sep = numpy.array(Sep)
 DR = numpy.array(temp)
 plt.ylabel('$\Delta$R$_s$ (mV/A)')
 plt.xlabel('Electrode seperation (nm)')
-#plt.plot(sep,temp,'ob')
-plt.plot(d,model,'-r',label = "$\lambda_s$ at " + str(t) + " K =  {} nm".format(format_error(params['K'].value,params['K'].stderr,latex=False)))
+plt.plot(sep,temp,'ob')
+#plt.plot(d,model,'-r',label = "$\lambda_s$ at " + str(t) + " K =  {} nm".format(format_error(params['K'].value,params['K'].stderr,latex=False)))
 plt.legend(loc='upper right')
 
 
