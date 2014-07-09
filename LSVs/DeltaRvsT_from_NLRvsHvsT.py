@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jul  8 19:30:51 2014
+Code to generate \Delta R_s vs Temperature from a folder containing nonlocal field sweeps.
 
-@author: phygbu
+Assumes data has been created through fitting NLIVs at each feild point in the Lab View software using:
+
+a*x^2 + b*x + c
+
+b = spin signal term.
+
+@author: phygbu and py07jtb
 """
 
 import numpy
