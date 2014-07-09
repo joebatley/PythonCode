@@ -28,7 +28,7 @@ def lin(x,a):
   return x*a
 
 ####### IMPORT DATA ######
-sample = 'SC021_2_A'
+sample = 'SC021_3_A'
 
 
 filedir = '/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/'+sample+'/6221-2182 DC IV/NLRvsHvsT/'
@@ -38,7 +38,7 @@ folder = DataFolder(filedir, pattern = filename,type=workfile) # Use type to pre
 DeltaR = workfile() #Avoid creating temporary python lists, use the final DataFile like object to hold the data
 DeltaR.metadata=folder[0].metadata
 DeltaR['Sample ID'] = folder[0]['Sample ID']
-DeltaR.column_headers=["T","P","Perr","AP","APerr","DR","DRerr","Voff","Ptest","APtest"]
+DeltaR.column_headers=["T","P","Perr","AP","APerr","DR mV","DRerr","Voff","Ptest","APtest"]
 #Use the labels attribute to store plot labels that are differnt from column names
 DeltaR.labels=[r'T (K)',r'$R_s(P)$ (mV/A)','Perr',r'$R_s(AP)$ (mV/A)','APerr',r'$\Delta R_s$ (mV/A)','DRerr mV',r'$R_s$ offset (mV/A)',"Test Columns"]
 alpha = 1e3
@@ -58,25 +58,24 @@ DeltaR.sort("T")
 
 print DeltaR.column_headers
 DeltaR.template=SPF.JTBPlotStyle
-label = str(DeltaR['Sample ID'])
-title = ' '
 DeltaR.figure() # Creating new figures like this means we don;t reuse windows from run to run
 f=plt.gcf()
 f.set_size_inches((5.5,3.75),forward=True) # Set for A4 - will make wrapper for this someday
 
 DeltaR.subplot(221)
-DeltaR.plot_xy("T","DR",yerr='DRerr',label = str(DeltaR['Sample ID']),title=title) # Just having the yerr keyword will trigger the plotter to be an errorbar
-DeltaR.legend(True)
+DeltaR.title = sample
+DeltaR.plot_xy("T","DR mV",yerr='DRerr',label = str(DeltaR['Sample ID']),title=title,linestyle='',marker='o') # Just having the yerr keyword will trigger the plotter to be an errorbar
 DeltaR.subplot(222)
 DeltaR.plot_xy("T","Voff",label = sample,title=title)
 DeltaR.subplot(223)
-DeltaR.plot_xy("T","P",yerr='Perr',label = 'P',title=title)
-DeltaR.plot_xy("T","AP",yerr='APerr',label = 'AP',title=title)
+DeltaR.plot_xy("T","P",yerr='Perr',label = 'P',title=title,linestyle='',marker='o')
+DeltaR.plot_xy("T","AP",yerr='APerr',label = 'AP',title=title,linestyle='',marker='o')
+DeltaR.ylabel=r"$R_s$ (mV/A)"
 DeltaR.subplot(224)
 DeltaR.plot_xy("T",'Ptest',label = 'P',title=title)
 DeltaR.plot_xy("T",'APtest',label = 'AP',title=title)
 DeltaR.ylabel="Tests"
 plt.tight_layout()
-#DeltaR.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/DeltaRvsT/' + str(p['Sample ID']) + 'DeltaRsvsT.txt')
+DeltaR.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/DeltaRvsT/' + sample + 'DeltaRsvsT.txt')
 
 
