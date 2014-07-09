@@ -39,25 +39,32 @@ def lin(x,m,c):
   return m*x+c
 
 #file = Stoner.CSVFile(False,1,2,',',',')
-file = Stoner.DataFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/SC004_8_T/SC004_8_T_6221-2182 DC IV_Counter_0_295K_Py_Inj_300uA_.txt') 
+file = Stoner.DataFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC019/DipProbe/SC019_9_A/20140623/6221-2182 DC IV/SC019_9_A_6221-2182 DC IV_Counter_0000 1.00_299.000000K_IV.txt') 
 a=Analysis.AnalyseFile(file)
+print a.column(1)
+fit, fitVar= a.curve_fit(lin,1,0)
 
-fit, fitVar= a.curve_fit(lin,'Current','Voltage')
-
-print fit
+print fit,fitVar
 error = numpy.sqrt(fitVar[0,0])
+print error
+t = 96e-9
+w = 1130e-9
+l = 30e-6
+
+print fit[0]*t*w/l
 
 alpha = 1e6
 beta = 1
 
-plt.title(a['Sample ID'] + ' - ' + a['Notes'] + ' at ' + str.format("{0:.1f}",a['Sample Temp']) + ' K')
+#plt.title(a['Sample ID'] + ' - ' + a['Notes'] + ' at ' + str.format("{0:.1f}",a['Sample Temp']) + ' K')
 plt.xlabel(r'Current ($\mu$A)')
 plt.ylabel(r'Voltage (V)')
 plt.ticklabel_format(style = 'sci', useOffset = False)
 plt.tick_params(axis='both', which='minor')
-plt.plot(alpha*a.column('Current'),beta*a.column('Voltage'),'-o',label = 'R = ' + str.format("{0:.2f}", fit[0]) + r'$\pm$' + str.format("{0:.2f}", error)+ r' $\Omega$')
-plt.plot(alpha*a.column('Current'),beta*(fit[1]+(a.column('Current')*fit[0])),'-r',label = 'Fit')
+plt.plot(a.column('1'),a.column('0'),'-o',label = 'R = ' + str.format("{0:.2f}", fit[0]) + r'$\pm$' + str.format("{0:.2f}", error)+ r' $\Omega$')
+plt.plot(a.column('1'),(fit[1]+(a.column('1')*fit[0])),'-r',label = 'Fit')
 plt.legend(loc=2)
+plt.tight_layout()
 plt.show()
 
 

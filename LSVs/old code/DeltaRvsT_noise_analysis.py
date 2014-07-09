@@ -40,8 +40,8 @@ plt.rcParams.update(params)
 
 ### IMPORT DATA ###
 
-a=Analysis.AnalyseFile('/Volumes/data-1/Projects/Spincurrents/Joe Batley/Measurements/RN0151/Transport/RN0151_4T/NLDCRvsTat60&-30mT/6221-2182 DC IV Timed interval 0000_RvsT_60mT.txt')   #import a single data file ready to use the Analysis class
-b=Analysis.AnalyseFile('/Volumes/data-1/Projects/Spincurrents/Joe Batley/Measurements/RN0151/Transport/RN0151_4T/NLDCRvsTat60&-30mT/6221-2182 DC IV Timed interval 0000_RvsT_-30mT!0002.txt')
+a=Analysis.AnalyseFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC020/Transport/SC020_5_B/6221-2182 DC IV/NLRvsHvsT/SC020_5_B_6221-2182 DC IV_Timed interval_0000 0.00_2.863500K_NLRvsT_n100mT.txt')   #import a single data file ready to use the Analysis class
+b=Analysis.AnalyseFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC020/Transport/SC020_5_B/6221-2182 DC IV/NLRvsHvsT/SC020_5_B_6221-2182 DC IV_Timed interval_0000 0.00_214.978000K_NLRvsT_n20mT.txt')
 
 
 
@@ -112,7 +112,7 @@ offset = Temp_b+(deltaR/2)
 #binter.add_column(deltaR,'DeltaR')
 
 ##################### FIT ################################
-
+'''
 CuR = Analysis.AnalyseFile('/Volumes/data-1/Projects/Spincurrents/Joe Batley/Measurements/RN0151/Transport/RN0151_4T/RN0151_4T_6221-2182 DC IV_Timed interval_0000_1.75_Cuspacer_RvT.txt')
 PyR = Stoner.CSVFile('/Volumes/data-1/Projects/Spincurrents/Mike Batley/RN0095/Dip Probe/RN0095_1_res.txt',1,2,',',',')
 
@@ -125,7 +125,7 @@ Pf = 0.35
 
 def Rs(x,a)
   ((4*Pf*Pf)/(1-(Pf*Pf))**2)*((NewPyR(x)*LambdaF*An)/(NewCuR(x)*a*))
-
+'''
 
 ###Plot###
 plt.title(r'')

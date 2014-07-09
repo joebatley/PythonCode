@@ -15,104 +15,68 @@ from Stoner.Folders import DataFolder
 import Stoner.Analysis as Analysis
 import scipy.optimize
 from lmfit import minimize, Parameters, Parameter, report_fit
+import Stoner.PlotFormats as SPF
+import Stoner.Plot as SP
 
-'''
-fig_width_pt = 800.0 # Get this from LaTeX using \showthe\columnwidth
-inches_per_pt = 1.0/72.27               # Convert pt to inch
-golden_mean = (numpy.sqrt(5)-1.0)/2.0         # Aesthetic ratio
-fig_width = fig_width_pt*inches_per_pt  # width in inches
-fig_height = fig_width*golden_mean      # height in inches
-fig_size =  [fig_width,fig_height]
- 
-params = {'backend': 'ps',
-          'axes.labelsize': 40,
-          'axes.linewidth':2,
-          'text.fontsize': 30,
-          'title.fontsize':28,
-          'legend.fontsize': 24,
-          'xtick.labelsize': 28,
-          'ytick.labelsize': 28,
-          'xtick.direction': 'in',
-          'ytick.direction': 'in',
-          'xtick.major.size':10,
-          'xtick.major.width':2,
-          'ytick.major.size':10,
-          'ytick.major.width':2,
-          'figure.figsize': fig_size,
-         'font.family':'Arial',
-         'xtick.major.pad':20,
-         'ytick.major.pad':20,
-         'font.size':28,
-         'lines.linewidth':4,
-         'lines.markersize':15}
- 
-plt.rcParams.update(params)
-'''
+
  
 def quad(x,a,b,c):
   return (a*x**2)+(b*x)+c
 
 
-folder = DataFolder('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/SC004_2_T/NLIVvsHat5K', pattern = '*.txt') 
+folder = DataFolder('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC021/Transport/SC021_2_A/6221-2182 DC IV/280K-IV_Data', pattern = '*.txt') 
 
 
-Field_down = []
-NLR_down = []
-iterator_down = []
-Field_up = []
-NLR_up = []
-iterator_up = []
+############ Calculate Delta R with error ############
 
-
+Rs = []
+Rserr = []
+F = []
+folder.sort('iterator')
 for f in folder:
   a = Analysis.AnalyseFile(f)
   fit = a.curve_fit(quad,'Current','Voltage',p0=[20.0,1e-7,0.0], result=True, replace=False, header="fit",asrow=True)
+  Rs.append(fit[2])
+  F.append(a['Magnet Output'])
+  Rserr.append(fit[3])
   
-  if a['iterator']<len(folder)/2:  
-    NLR_down.append(fit[2])
-    Field_down.append(a['Magnet Output']*1e-9)
-    iterator_down.append(a['iterator'])
-  else:
-    NLR_up.append(fit[2])
-    Field_up.append(a['Magnet Output']*1e-9)
-    iterator_up.append(a['iterator'])
+Mean = (max(Rs)+min(Rs))/2
+offset = (max(Rs)+min(Rs))/2
 
-result_down = Stoner.DataFile()
-result_down.add_column(Field_down,column_header='Field')
-result_down.add_column(iterator_down,column_header='i')
-result_down.add_column(NLR_down,column_header='NLR')
-result_down.sort('i')
+RS = Analysis.AnalyseFile()
+RS.add_column(F,r'$\mu_o$H (mT)')
+RS.add_column(Rs,'R$_s$ (V/A)')
+RS.add_column(Rserr,'Rserr')
 
+RS.subtract('R$_s$ (V/A)',offset,replace=True,header=r'$\alpha$ (V/A)')
+RS.mulitply(r'$\alpha$ (V/A)',1e3,replace=True,header=r'$\alpha$ (mV/A)')
+RS.mulitply('Rserr',1e3,replace=True,header='Rserr')
 
-result_up = Stoner.DataFile()
-result_up.add_column(Field_up,column_header='Field')
-result_up.add_column(iterator_up,column_header='i')
-result_up.add_column(NLR_up,column_header='NLR')
-result_up.sort('i')
+AP = RS.search(r'$\alpha$ (mV/A)',lambda x,y: x<Mean,r'$\alpha$ (mV/A)')
+P = RS.search(r'$\alpha$ (mV/A)',lambda x,y: x>Mean,r'$\alpha$ (mV/A)')
+
+DR = numpy.mean(P)-numpy.mean(AP)
+DRerr = (numpy.std(P)**2+numpy.std(AP)**2)**0.5
+
+print DR,DRerr
 
 
-offset = (max(result_up.column('NLR'))+min(result_up.column('NLR')))/2
 
-###Plot###
-#plt.title('NLR vs H of SC004_2_T\n from linear fit to NLIV',verticalalignment='bottom')
-plt.xlabel('$\mu_o$H (T)',labelpad=10)
-plt.ylabel(r'R$_s$ (mV/A)',labelpad=10)
-plt.ticklabel_format(style = 'sci', useOffset = False)
-plt.tick_params(axis='both', which='minor')
-plt.hold(True)
+################ plot Data ##################
 
-#plt.plot(result_up.column('Field'),1e3*(result_up.column('NLR')),'-ob',label = '280 K')
-#plt.plot(result_down.column('Field'),1e3*(result_down.column('NLR')),'-or')
 
-plt.plot(result_up.column('Field'),1e3*(result_up.column('NLR')),'-ob',label = '5 K')
-plt.plot(result_down.column('Field'),1e3*(result_down.column('NLR')),'-or')
+p=SP.PlotFile(RS)
+p.setas="xye"
+p.template=SPF.JTBPlotStyle
+label = '2 K'
+title = ' '
+p.plot(label = label,title=title,figure=1)
 
 
 
 
-plt.legend()
-plt.tight_layout()
-plt.show()
+
+
 
 
 
