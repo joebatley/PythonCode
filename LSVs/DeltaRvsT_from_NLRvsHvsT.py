@@ -28,10 +28,10 @@ def lin(x,a):
   return x*a
 
 ####### IMPORT DATA ######
-sample = 'SC021_3_A'
+sample = 'SC020_5_A'
 
 
-filedir = '/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/'+sample+'/6221-2182 DC IV/NLRvsHvsT/'
+filedir = '/Volumes/stonerlab.leeds.ac.uk - -storage/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/'+sample+'/6221-2182 DC IV/NLRvsHvsT/'
 filename = '*_NLRvsH.txt'
 folder = DataFolder(filedir, pattern = filename,type=workfile) # Use type to preset the DataFile subclass
 
@@ -64,18 +64,18 @@ f.set_size_inches((5.5,3.75),forward=True) # Set for A4 - will make wrapper for 
 
 DeltaR.subplot(221)
 DeltaR.title = sample
-DeltaR.plot_xy("T","DR mV",yerr='DRerr',label = str(DeltaR['Sample ID']),title=title,linestyle='',marker='o') # Just having the yerr keyword will trigger the plotter to be an errorbar
+DeltaR.plot_xy("T","DR mV",yerr='DRerr',label = str(DeltaR['Sample ID']),linestyle='',marker='o') # Just having the yerr keyword will trigger the plotter to be an errorbar
 DeltaR.subplot(222)
-DeltaR.plot_xy("T","Voff",label = sample,title=title)
+DeltaR.plot_xy("T","Voff",label = sample)
 DeltaR.subplot(223)
-DeltaR.plot_xy("T","P",yerr='Perr',label = 'P',title=title,linestyle='',marker='o')
-DeltaR.plot_xy("T","AP",yerr='APerr',label = 'AP',title=title,linestyle='',marker='o')
+DeltaR.plot_xy("T","P",yerr='Perr',label = 'P',linestyle='',marker='o')
+DeltaR.plot_xy("T","AP",yerr='APerr',label = 'AP',linestyle='',marker='o')
 DeltaR.ylabel=r"$R_s$ (mV/A)"
 DeltaR.subplot(224)
-DeltaR.plot_xy("T",'Ptest',label = 'P',title=title)
-DeltaR.plot_xy("T",'APtest',label = 'AP',title=title)
+DeltaR.plot_xy("T",'Ptest',label = 'P')
+DeltaR.plot_xy("T",'APtest',label = 'AP')
 DeltaR.ylabel="Tests"
 plt.tight_layout()
-DeltaR.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/DeltaRvsT/' + sample + 'DeltaRsvsT.txt')
+#DeltaR.save('/Volumes/stonerlab.leeds.ac.uk - -storage/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/DeltaRvsT/' + sample + 'DeltaRsvsT.txt')
 
 

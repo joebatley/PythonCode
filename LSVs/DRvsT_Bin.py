@@ -20,7 +20,7 @@ sample = 'SC021_5_A'
 
 ####### IMPORT DATA ######
 
-filedir = '/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC021/Transport/SC021_5_A/6221-2182 DC IV/NLRvsHvsT/'
+filedir = '/Volumes/stonerlab.leeds.ac.uk - -storage 2/data/Projects/Spincurrents/Joe Batley/Measurements/SC021/Transport/SC021_5_A/6221-2182 DC IV/NLRvsHvsT/'
 filename_P = 'SC021_5_A_6221-2182 DC IV_Timed interval_0000 0.00_2.171300K_NLRvsT_100mT.txt'
 filename_AP = 'SC021_5_A_6221-2182 DC IV_Timed interval_0000 0.00_277.834000K_NLRvsT_0mT_AP.txt'
 #A = Stoner.DataFile(False)
@@ -94,7 +94,7 @@ title = ' '
 #p.plot_xy('T (K)',r'$\Delta R_s$ (V/A)',plotter=plt.errorbar,yerr='DRerr',label = label,title=title,figure=1)
 #p.plot_xy('T (K)',[r'$R_s(P)$ (V/A)',r'$R_s(AP)$ (V/A)'],plotter=plt.errorbar,yerr=[r'$R_s(P)_err$ (V/A)',r'$R_s(AP)_err$ (V/A)'],label = label,title=title,figure=2)
 #p['Sample ID'] = sample
-p.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/DeltaRvsT/' + sample + 'DeltaRsvsT.txt')
+p.save('/Volumes/stonerlab.leeds.ac.uk - -storage/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/DeltaRvsT/' + sample + 'DeltaRsvsT.txt')
 
 
 
