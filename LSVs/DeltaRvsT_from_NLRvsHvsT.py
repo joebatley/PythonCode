@@ -28,10 +28,17 @@ def lin(x,a):
   return x*a
 
 ####### IMPORT DATA ######
+<<<<<<< HEAD
 sample = 'SC021_5_A'
 
 
 filedir = '/Users/Joe/PhD/Measurements/'+sample.split('_')[0]+'/Transport/'+sample+'/6221-2182 DC IV/NLRvsHvsT/'
+=======
+sample = 'SC020_5_A'
+
+
+filedir = '/Volumes/stonerlab.leeds.ac.uk - -storage/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/'+sample+'/6221-2182 DC IV/NLRvsHvsT/'
+>>>>>>> FETCH_HEAD
 filename = '*_NLRvsH.txt'
 folder = DataFolder(filedir, pattern = filename,type=workfile) # Use type to preset the DataFile subclass
 
@@ -73,8 +80,16 @@ DeltaR.plot_xy("T","P",yerr='Perr',label = 'P',linestyle='',marker='o')
 DeltaR.plot_xy("T","AP",yerr='APerr',label = 'AP',linestyle='',marker='o')
 DeltaR.ylabel=r"$R_s$ (mV/A)"
 DeltaR.subplot(224)
+<<<<<<< HEAD
 DeltaR.plot_xy("T",'beta',yerr='beta_err',label = sample)
 plt.tight_layout()
 DeltaR.save('/Users/Joe/PhD/Measurements/'+sample.split('_')[0]+'/Transport/Beta/' + sample + 'DeltaRsvsT.txt')
+=======
+DeltaR.plot_xy("T",'Ptest',label = 'P')
+DeltaR.plot_xy("T",'APtest',label = 'AP')
+DeltaR.ylabel="Tests"
+plt.tight_layout()
+#DeltaR.save('/Volumes/stonerlab.leeds.ac.uk - -storage/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/DeltaRvsT/' + sample + 'DeltaRsvsT.txt')
+>>>>>>> FETCH_HEAD
 
 

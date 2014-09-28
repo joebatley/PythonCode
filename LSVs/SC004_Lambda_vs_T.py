@@ -176,7 +176,11 @@ print decay_fit.column_headers
 # Plot Lambda and alpha
 plt.subplot2grid((2,2),(0,0))
 output.title = sample
+<<<<<<< HEAD
 output.plot_xy('T','Lam_Cu',yerr='Lam_err',linestyle='',marker='o') 
+=======
+output.plot_xy('T','Lam_Cu',,linestyle='',marker='o') 
+>>>>>>> FETCH_HEAD
 plt.subplot2grid((2,2),(0,1))
 output.plot_xy('T','P',yerr='P_err',linestyle='',marker='o')
 plt.subplot2grid((2,2),(1,0),colspan=2)
@@ -189,6 +193,7 @@ plt.tight_layout()
 
 
 #output.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample+'/Transport/DeltaRvsT/'+sample+'_Spindiffusion_length_vs_T.txt')
+<<<<<<< HEAD
 device='Py/Cu'
 decay.multiply('L',1e6,header='d')
 decay_fit.multiply('L',1e6,header='d')
@@ -207,3 +212,9 @@ output.plot_xy('T','Lam_Cu nm',yerr='Lam_err nm',linestyle='',marker='o',figure=
 output.ylabel=r'$\lambda_{Cu}$ (nm)'
 
 output.plot_xy('T','P',yerr='P_err',linestyle='',marker='o',figure=4,label=device)
+=======
+
+
+
+
+>>>>>>> FETCH_HEAD
