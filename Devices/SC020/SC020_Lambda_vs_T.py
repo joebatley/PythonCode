@@ -16,15 +16,7 @@ class workfile(Analysis.AnalyseFile,SP.PlotFile):
     """A class that combines AnalyseFile and PlotFile together"""
     pass
 
-<<<<<<< HEAD
 Seperation = {'1A':300e-9,'1B':400e-9,'2A':500e-9,'2B':600e-9,'3A':700e-9,'3B':800e-9,'4A':900e-9,'5A':1200e-9,'5B':1400e-9,}
-=======
-<<<<<<< HEAD
-Seperation = {'1A':300e-9,'1B':400e-9,'2A':500e-9,'2B':600e-9,'3A':700e-9,'3B':800e-9,'4A':900e-9,'5A':1200e-9,'5B':1400e-9,}
-=======
-Seperation = {'1A':300e-9,'1B':400e-9,'2A':500e-9,'2B':600e-9,'3A':700e-9,'3B':800e-9,'5A':1200e-9,'5B':1400e-9,}
->>>>>>> FETCH_HEAD
->>>>>>> FETCH_HEAD
 
 # define objective function: returns the array to be minimized
 def fcn2min(params, DR, L, t):
@@ -38,20 +30,10 @@ def fcn2min(params, DR, L, t):
     Wcu = 150e-9
     Tcu = 120e-9
     Lambda_F = 5e-9*(PyR(20)/PyR(t))
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> FETCH_HEAD
     if sample=='SC020':    
         PyRes = PyR(t)
     else:
         PyRes = PyR(t)+CoR(t)
-<<<<<<< HEAD
-=======
-=======
-    PyRes = PyR(t)
->>>>>>> FETCH_HEAD
->>>>>>> FETCH_HEAD
     CuRes = CuR(t)
 
     l = -1*L/Lambda_N
@@ -72,17 +54,14 @@ def fcn2min(params, DR, L, t):
     return (Y - DR)
   
 
-sample = 'SC021'
-<<<<<<< HEAD
-plot_T = [20.]
-=======
-<<<<<<< HEAD
+sample = 'SC020'
 plot_T = [20.]
 # Import and interpolate the resistivity data
 
 if sample == 'SC020':
     Py = Analysis.AnalyseFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC020/Transport/DeltaRvsT/SC018_4A_Py_rhovT_.txt')
     Py.sort('T (K)')
+    print min(Py.column('T (K)')),max(Py.column('T (K)'))
     PyR = interpolate.interp1d(Py.column('T (K)'),Py.column(r'$\rho (\Omega$m)'))
 else:
     Co = Analysis.AnalyseFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC021/Transport/DeltaRvsT/SC018_5A_rhovT.txt')
@@ -92,35 +71,12 @@ else:
     PyR = interpolate.interp1d(Py.column('T (K)'),Py.column(r'$\rho (\Omega$m)'))
     Co.sort('T (K)')
     CoR = interpolate.interp1d(Py.column('T (K)'),Py.column(r'$\rho (\Omega$m)'))
-=======
-plot_T = [20.,250.]
->>>>>>> FETCH_HEAD
-# Import and interpolate the resistivity data
-
-if sample == 'SC020':
-    Py = Analysis.AnalyseFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC020/Transport/DeltaRvsT/SC018_4A_Py_rhovT_.txt')
-    Py.sort('T (K)')
-    PyR = interpolate.interp1d(Py.column('T (K)'),Py.column(r'$\rho (\Omega$m)'))
-else:
-    Co = Analysis.AnalyseFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC021/Transport/DeltaRvsT/SC018_5A_rhovT.txt')
-    Py = Analysis.AnalyseFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC020/Transport/DeltaRvsT/SC018_4A_Py_rhovT_.txt')
-    print min(Py.column('T (K)'))
-<<<<<<< HEAD
-    Py.sort('T (K)')
-    PyR = interpolate.interp1d(Py.column('T (K)'),Py.column(r'$\rho (\Omega$m)'))
-    Co.sort('T (K)')
-    CoR = interpolate.interp1d(Py.column('T (K)'),Py.column(r'$\rho (\Omega$m)'))
-=======
-Py.sort('T (K)')
-PyR = interpolate.interp1d(Py.column('T (K)'),Py.column(r'$\rho (\Omega$m)'))
->>>>>>> FETCH_HEAD
->>>>>>> FETCH_HEAD
 
 
 Cu = Stoner.DataFile('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample+'/Transport/DeltaRvsT/'+sample+'_Cu_rhovT.txt')
 Cu.sort('T (K)')
 CuR = interpolate.interp1d(Cu.column('T (K)'),Cu.column(r'$\rho (\Omega$m)'))
-
+print min(Cu.column('T (K)')),max(Cu.column('T (K)'))
 
 # Import Delta R vs T data and group
 pattern = '*DeltaRsvsT.txt'
@@ -137,49 +93,28 @@ for f in folder:
     Spinsig.append(interpolate.interp1d(f.column('T'),f.column('DR')))
     Spinsigerr.append(interpolate.interp1d(f.column('T'),f.column('DRerr')))
     Sep.append(Seperation[str(f['Sample ID'].split('_')[1]+f['Sample ID'].split('_')[2])])
-
+    print min(f.column('T')),max(f.column('T'))
 
 # create a set of Parameters
 params = Parameters()
 params.add('Lambda_N',   value = 600e-9,min=0,max=2e-6)
 params.add('Alpha', value = 0.42,min=0,max=1,vary=True)
 
-T1 = numpy.arange(20.,100.,10.)
-T2 = numpy.arange(100.,200.,20.)
-<<<<<<< HEAD
-T3 = numpy.array([200.,225.,249.])
-=======
-<<<<<<< HEAD
-T3 = numpy.array([200.,225.,249.])
-=======
-T3 = numpy.arange(200.,275.,25.)
->>>>>>> FETCH_HEAD
->>>>>>> FETCH_HEAD
-T = numpy.concatenate((T1,T2,T3),axis=0)
+T1 = numpy.arange(5.,80.,5.)
+T2 = numpy.arange(80.,100.,10.)
+T3 = numpy.arange(100.,200.,20.)
+T4 = numpy.array([200.,225.,249.,270.])
+T = numpy.concatenate((T1,T2,T3,T4),axis=0)
 
 output = workfile()
 output.column_headers = ['T','Lam_Cu','Lam_err','P','P_err','LamFM']
 output.labels = ['T (K)',r'$\lambda_{Cu}$ (m)','Lam_err',r'$\alpha$','P_err',r'$\lambda_{FM}$ (m)']
 
 output.template=SPF.JTBPlotStyle
-<<<<<<< HEAD
 #output.figure(1) # Creating new figures like this means we don;t reuse windows from run to run
 
 decay_fit = workfile()
 L = numpy.arange(0,1.5e-6,10e-9)
-=======
-<<<<<<< HEAD
-#output.figure(1) # Creating new figures like this means we don;t reuse windows from run to run
-
-decay_fit = workfile()
-L = numpy.arange(0,1.5e-6,10e-9)
-=======
-output.figure(1) # Creating new figures like this means we don;t reuse windows from run to run
-
-decay_fit = workfile()
-L = numpy.arange(200e-9,1.5e-6,10e-9)
->>>>>>> FETCH_HEAD
->>>>>>> FETCH_HEAD
 decay_fit.add_column(L,'L (m)')
 decay_fit.template=SPF.JTBPlotStyle
 decay_fit.figure(1)
@@ -197,7 +132,7 @@ f.set_size_inches((5.5,3.75),forward=True) # Set for A4 - will make wrapper for 
 
 # Loop over temperature range and fit for spin diffusion length and alph at each temp
 for t in T:
-  print t
+  
   DRs = []
   DRs_err=[]
   for i in range(len(Sep)):
@@ -212,7 +147,7 @@ for t in T:
   final = numpy.array(DRs) + result.residual
   
   # write error report
-  report_fit(params)
+  #report_fit(params)
   
   Lambda_F = 5e-9*(PyR(20)/PyR(t))
   row = numpy.array([t,params['Lambda_N'].value,params['Lambda_N'].stderr,params['Alpha'].value,params['Alpha'].stderr,Lambda_F])
@@ -227,20 +162,10 @@ for t in T:
      Wcu = 150e-9
      Tcu = 120e-9
      Lambda_F = 5e-9*(PyR(20)/PyR(t))
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> FETCH_HEAD
      if sample=='SC020':    
         PyRes = PyR(t)
      else:
         PyRes = PyR(t)+CoR(t)
-<<<<<<< HEAD
-=======
-=======
-     PyRes = PyR(t)
->>>>>>> FETCH_HEAD
->>>>>>> FETCH_HEAD
      CuRes = CuR(t)
 
      l = -1*L/Lambda_N     
@@ -259,14 +184,10 @@ for t in T:
      decay.add_column(DRs,'DRs'+str(t))
      decay.add_column(DRs_err,'DRs_err'+str(t))
 
-print decay_fit.column_headers
+#print decay_fit.column_headers
 # Plot Lambda and alpha
 plt.subplot2grid((2,2),(0,0))
 output.title = sample
-<<<<<<< HEAD
-output.plot_xy('T','Lam_Cu',yerr='Lam_err',linestyle='',marker='o',figure=1) 
-=======
-<<<<<<< HEAD
 output.plot_xy('T','Lam_Cu',yerr='Lam_err',linestyle='',marker='o',figure=1) 
 plt.subplot2grid((2,2),(0,1))
 output.plot_xy('T','P',yerr='P_err',linestyle='',marker='o',figure=1)
@@ -280,76 +201,26 @@ for t in plot_T:
 plt.tight_layout()
 
 
-#output.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample+'/Transport/Scattering Analysis/'+sample+'_Spindiffusion_length_vs_T.txt')
-if sample =='SC020':
-    device='Py/Cu'
-else:
-    device='Py/Co/Cu'
-    
-decay_fit.multiply('DR'+str(t),1e3,header='DRmV'+str(t))
-decay.multiply('DRs'+str(t),1e3,header='DRsmV'+str(t))
-decay.multiply('DRs_err'+str(t),1e3,header='DRsmV_err'+str(t))
-decay_fit.plot_xy('L (m)','DRmV'+str(t),linestyle='--',linewidth=1,marker='',color='k',label=None,figure=2)
-decay.plot_xy('L (m)','DRsmV'+str(t),yerr='DRsmV_err'+str(t),linestyle='',marker='o',markersize=4,label=device,figure=2)
-decay.ylabel=r'$\Delta R_s$ (mV/A)'
-
-output.multiply('Lam_Cu',1e9,header='Lam_Cu nm')
-output.multiply('Lam_err',1e9,header='Lam_err nm')
-output.plot_xy('T','Lam_Cu nm',yerr='Lam_err nm',linestyle='',marker='o',figure=3,label=device)
-output.ylabel=r'$\lambda_{Cu}$ (nm)'
-
-output.plot_xy('T','P',yerr='P_err',linestyle='',marker='o',figure=4,label=device)
-
-print numpy.mean(output.column('P'))
-print numpy.mean(output.column('P_err'))
-print output
-=======
-output.plot_xy('T','Lam_Cu',yerr='Lam_err',linestyle='',marker='o') 
->>>>>>> FETCH_HEAD
-plt.subplot2grid((2,2),(0,1))
-output.plot_xy('T','P',yerr='P_err',linestyle='',marker='o',figure=1)
-plt.subplot2grid((2,2),(1,0),colspan=2)
-for t in plot_T:
-    decay_fit.plot_xy('L (m)','DR'+str(t),linestyle='--',linewidth=1,marker='',color='k',label=None,figure=1)
-    decay.plot_xy('L (m)','DRs'+str(t),yerr='DRs_err'+str(t),linestyle='',marker='o',markersize=4,label=str(t)+' K',figure=1)
-    decay.ylabel=r'$\Delta R_s$ (V/A)'
-#plt.subplot2grid((2,2),(1,0))    
-#output.plot_xy('T','LamFM',linestyle='',marker='o')
-plt.tight_layout()
-
-
-<<<<<<< HEAD
-#output.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample+'/Transport/Scattering Analysis/'+sample+'_Spindiffusion_length_vs_T.txt')
-if sample =='SC020':
-    device='Py/Cu'
-else:
-    device='Py/Co/Cu'
-    
-decay_fit.multiply('DR'+str(t),1e3,header='DRmV'+str(t))
-decay.multiply('DRs'+str(t),1e3,header='DRsmV'+str(t))
-decay.multiply('DRs_err'+str(t),1e3,header='DRsmV_err'+str(t))
-decay_fit.plot_xy('L (m)','DRmV'+str(t),linestyle='--',linewidth=1,marker='',color='k',label=None,figure=2)
-decay.plot_xy('L (m)','DRsmV'+str(t),yerr='DRsmV_err'+str(t),linestyle='',marker='o',markersize=4,label=device,figure=2)
-decay.ylabel=r'$\Delta R_s$ (mV/A)'
-
-output.multiply('Lam_Cu',1e9,header='Lam_Cu nm')
-output.multiply('Lam_err',1e9,header='Lam_err nm')
-output.plot_xy('T','Lam_Cu nm',yerr='Lam_err nm',linestyle='',marker='o',figure=3,label=device)
-output.ylabel=r'$\lambda_{Cu}$ (nm)'
-
-output.plot_xy('T','P',yerr='P_err',linestyle='',marker='o',figure=4,label=device)
-
-print numpy.mean(output.column('P'))
-print numpy.mean(output.column('P_err'))
-print output
-=======
 output.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample+'/Transport/Scattering Analysis/'+sample+'_Spindiffusion_length_vs_T.txt')
+if sample =='SC020':
+    device='Py/Cu'
+else:
+    device='Py/Co/Cu'
+    
+decay_fit.multiply('DR'+str(t),1e3,header='DRmV'+str(t))
+decay.multiply('DRs'+str(t),1e3,header='DRsmV'+str(t))
+decay.multiply('DRs_err'+str(t),1e3,header='DRsmV_err'+str(t))
+decay_fit.plot_xy('L (m)','DRmV'+str(t),linestyle='--',linewidth=1,marker='',color='k',label=None,figure=2)
+decay.plot_xy('L (m)','DRsmV'+str(t),yerr='DRsmV_err'+str(t),linestyle='',marker='o',markersize=4,label=device,figure=2)
+decay.ylabel=r'$\Delta R_s$ (mV/A)'
 
+output.multiply('Lam_Cu',1e9,header='Lam_Cu nm')
+output.multiply('Lam_err',1e9,header='Lam_err nm')
+output.plot_xy('T','Lam_Cu nm',yerr='Lam_err nm',linestyle='',marker='o',figure=3,label=device)
+output.ylabel=r'$\lambda_{Cu}$ (nm)'
 
+output.plot_xy('T','P',yerr='P_err',linestyle='',marker='o',figure=4,label=device)
 
-
-
-
-
->>>>>>> FETCH_HEAD
->>>>>>> FETCH_HEAD
+#print numpy.mean(output.column('P'))
+#print numpy.mean(output.column('P_err'))
+#print output
