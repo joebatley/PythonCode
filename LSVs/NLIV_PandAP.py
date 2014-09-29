@@ -26,8 +26,8 @@ def avg(x):
   return numpy.mean(x)
 ########## Find Mean Rs ##########
 
-filedir = '/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC020/Transport/SC020_1_B/6221-2182 DC IV/'
-filename = 'SC020_1_B_6221-2182 DC IV_Magnet Power Supply Multi-segment_0166 0.00_5.203800K_NLRvsH_8T.txt'
+filedir = '/Users/Joe/PhD/Measurements/SC020/Transport/SC020_1_B/6221-2182 DC IV/NLRvsHvsT/'
+filename = 'SC020_1_B_6221-2182 DC IV_Magnet Power Supply Multi-segment_0150 0.00_1.864800K_NLRvsH.txt'
 file = Stoner.DataFile(filedir+filename)
 
 a=Analysis.AnalyseFile(file)
@@ -35,9 +35,9 @@ mean = (a.max('b')[0]+a.min('b')[0])/2
 
 
 ########## Import IV Data ##########
-folder = DataFolder('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC020/Transport/SC020_1_B/6221-2182 DC IV/High_Field_5K-IV_Data', pattern = '*.txt') 
+folder = DataFolder('/Users/Joe/PhD/Measurements/SC020/Transport/SC020_1_B/6221-2182 DC IV/2K-IV_Data', pattern = '*.txt') 
 
-
+print folder
 ########## Seperate IVs into P and AP ##########
 
 P = Analysis.AnalyseFile()
@@ -47,9 +47,9 @@ for f in folder:
   a = Analysis.AnalyseFile(f)
   fit = a.curve_fit(quad,'Current','Voltage',p0=[20.0,1e-7,0.0], result=True, replace=False, header="fit",asrow=True)
   if fit[2]>mean:
-    P.add_column(f.column('Voltage'),f['Control:Magnet'])
+    P.add_column(f.column('Voltage'),str(f['Control:Magnet']))
   else:
-    AP.add_column(f.column('Voltage'),f['Control:Magnet'])
+    AP.add_column(f.column('Voltage'),str(f['Control:Magnet']))
 
 
 
@@ -57,17 +57,17 @@ for f in folder:
 ########## Average P and AP state IVs ##########
 alpha = 1e6
 beta = 1e6
-
+print P
   
 P.apply(avg,0,replace=False,header='V$_{NL}$ (V)')
-P.mulitply('V$_{NL}$ (V)',alpha,header='V$_{NL}$ ($\mu$V)')
+P.multiply('V$_{NL}$ (V)',alpha,header='V$_{NL}$ ($\mu$V)')
 P.add_column(f.column('Current'),'Current')
-P.mulitply('Current',beta,header='I ($\mu$A)')
+P.multiply('Current',beta,header='I ($\mu$A)')
 
 AP.apply(avg,0,replace=False,header='V$_{NL}$ (V)')
-AP.mulitply('V$_{NL}$ (V)',alpha,header='V$_{NL}$ ($\mu$V)')
+AP.multiply('V$_{NL}$ (V)',alpha,header='V$_{NL}$ ($\mu$V)')
 AP.add_column(f.column('Current'),'Current')
-AP.mulitply('Current',beta,header='I ($\mu$A)')
+AP.multiply('Current',beta,header='I ($\mu$A)')
 
 
 ################ plot Data ##################

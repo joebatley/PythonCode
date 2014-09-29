@@ -176,7 +176,7 @@ print decay_fit.column_headers
 # Plot Lambda and alpha
 plt.subplot2grid((2,2),(0,0))
 output.title = sample
-output.plot_xy('T','Lam_Cu',,linestyle='',marker='o') 
+output.plot_xy('T','Lam_Cu',yerr='Lam_err',linestyle='',marker='o') 
 plt.subplot2grid((2,2),(0,1))
 output.plot_xy('T','P',yerr='P_err',linestyle='',marker='o')
 plt.subplot2grid((2,2),(1,0),colspan=2)
@@ -189,7 +189,21 @@ plt.tight_layout()
 
 
 #output.save('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample+'/Transport/DeltaRvsT/'+sample+'_Spindiffusion_length_vs_T.txt')
+device='Py/Cu'
+decay.multiply('L',1e6,header='d')
+decay_fit.multiply('L',1e6,header='d')
+for t in plot_T:
+    decay_fit.multiply('DR'+str(t),1e3,header='DRmV'+str(t))
+    decay.multiply('DRs'+str(t),1e3,header='DRsmV'+str(t))
+    decay.multiply('DRs_err'+str(t),1e3,header='DRsmV_err'+str(t))
+    decay_fit.plot_xy('d','DRmV'+str(t),linestyle='--',linewidth=1,marker='',color='k',label=None,figure=2)
+    decay.plot_xy('d','DRsmV'+str(t),yerr='DRsmV_err'+str(t),linestyle='',marker='o',markersize=4,label=str(t)+' K',figure=2)
+    decay.ylabel=r'$\Delta R_s$ (mV/A)'
+    decay.xlabel=r'L ($\mu m$)'
 
+output.multiply('Lam_Cu',1e9,header='Lam_Cu nm')
+output.multiply('Lam_err',1e9,header='Lam_err nm')
+output.plot_xy('T','Lam_Cu nm',yerr='Lam_err nm',linestyle='',marker='o',figure=3,label=device)
+output.ylabel=r'$\lambda_{Cu}$ (nm)'
 
-
-
+output.plot_xy('T','P',yerr='P_err',linestyle='',marker='o',figure=4,label=device)

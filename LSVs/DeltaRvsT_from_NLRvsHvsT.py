@@ -28,19 +28,19 @@ def lin(x,a):
   return x*a
 
 ####### IMPORT DATA ######
-sample = 'SC020_5_A'
+sample = 'SC021_5_A'
 
 
-filedir = '/Volumes/stonerlab.leeds.ac.uk - -storage/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/'+sample+'/6221-2182 DC IV/NLRvsHvsT/'
+filedir = '/Users/Joe/PhD/Measurements/'+sample.split('_')[0]+'/Transport/'+sample+'/6221-2182 DC IV/NLRvsHvsT/'
 filename = '*_NLRvsH.txt'
 folder = DataFolder(filedir, pattern = filename,type=workfile) # Use type to preset the DataFile subclass
 
 DeltaR = workfile() #Avoid creating temporary python lists, use the final DataFile like object to hold the data
 DeltaR.metadata=folder[0].metadata
 DeltaR['Sample ID'] = folder[0]['Sample ID']
-DeltaR.column_headers=["T","P","Perr","AP","APerr","DR mV","DRerr","Voff","Ptest","APtest"]
+DeltaR.column_headers=["T","P","Perr","AP","APerr","DR mV","DRerr","Voff","Ptest","APtest","beta","beta_err"]
 #Use the labels attribute to store plot labels that are differnt from column names
-DeltaR.labels=[r'T (K)',r'$R_s(P)$ (mV/A)','Perr',r'$R_s(AP)$ (mV/A)','APerr',r'$\Delta R_s$ (mV/A)','DRerr mV',r'$R_s$ offset (mV/A)',"Test Columns"]
+DeltaR.labels=[r'T (K)',r'$R_s(P)$ (mV/A)','Perr',r'$R_s(AP)$ (mV/A)','APerr',r'$\Delta R_s$ (mV/A)','DRerr mV',r'$R_s$ offset (mV/A)',"Test P","Test AP",r"\beta","beta_err"]
 alpha = 1e3
 for a in folder:
     print a['Sample Temp']
@@ -49,9 +49,10 @@ for a in folder:
     Perr = numpy.std(a.search('b',lambda x,y:x>mean,columns='b'))/numpy.sqrt(len(a.search('b',lambda x,y:x>mean,columns='b')))
     AP = a.mean('b',bounds = lambda x:x<mean)
     APerr = numpy.std(a.search('b',lambda x,y:x<mean,columns='b'))/numpy.sqrt(len(a.search('b',lambda x,y:x<mean,columns='b')))
-
+    B = a.mean('a')
+    Berr = numpy.std(a.column('a'))/len(a.column('a'))
     # Build one row and then append to the DataFile
-    row=numpy.array([a['Sample Temp'],P*alpha,Perr*alpha,AP*alpha,APerr*alpha,(P-AP)*alpha,alpha*numpy.sqrt((Perr**2)+(APerr**2)),mean*alpha,P-mean,AP-mean])
+    row=numpy.array([a['Sample Temp'],P*alpha,Perr*alpha,AP*alpha,APerr*alpha,(P-AP)*alpha,alpha*numpy.sqrt((Perr**2)+(APerr**2)),mean*alpha,P-mean,AP-mean,B,Berr])
     DeltaR+=row
   
 DeltaR.sort("T")
@@ -72,10 +73,8 @@ DeltaR.plot_xy("T","P",yerr='Perr',label = 'P',linestyle='',marker='o')
 DeltaR.plot_xy("T","AP",yerr='APerr',label = 'AP',linestyle='',marker='o')
 DeltaR.ylabel=r"$R_s$ (mV/A)"
 DeltaR.subplot(224)
-DeltaR.plot_xy("T",'Ptest',label = 'P')
-DeltaR.plot_xy("T",'APtest',label = 'AP')
-DeltaR.ylabel="Tests"
+DeltaR.plot_xy("T",'beta',yerr='beta_err',label = sample)
 plt.tight_layout()
-#DeltaR.save('/Volumes/stonerlab.leeds.ac.uk - -storage/data/Projects/Spincurrents/Joe Batley/Measurements/'+sample.split('_')[0]+'/Transport/DeltaRvsT/' + sample + 'DeltaRsvsT.txt')
+DeltaR.save('/Users/Joe/PhD/Measurements/'+sample.split('_')[0]+'/Transport/Beta/' + sample + 'DeltaRsvsT.txt')
 
 

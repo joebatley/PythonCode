@@ -24,7 +24,7 @@ def quad(x,a,b,c):
   return (a*x**2)+(b*x)+c
 
 
-folder = DataFolder('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC021/Transport/SC021_2_A/6221-2182 DC IV/280K-IV_Data', pattern = '*.txt') 
+folder = DataFolder('/Volumes/data/Projects/Spincurrents/Joe Batley/Measurements/SC004/Transport/SC004_2_T/NLIVvsHat5K/', pattern = '*.txt') 
 
 
 ############ Calculate Delta R with error ############
@@ -37,7 +37,7 @@ for f in folder:
   a = Analysis.AnalyseFile(f)
   fit = a.curve_fit(quad,'Current','Voltage',p0=[20.0,1e-7,0.0], result=True, replace=False, header="fit",asrow=True)
   Rs.append(fit[2])
-  F.append(a['Magnet Output'])
+  F.append(a['Magnet Output']*1e-9)
   Rserr.append(fit[3])
   
 Mean = (max(Rs)+min(Rs))/2
@@ -49,9 +49,10 @@ RS.add_column(Rs,'R$_s$ (V/A)')
 RS.add_column(Rserr,'Rserr')
 
 RS.subtract('R$_s$ (V/A)',offset,replace=True,header=r'$\alpha$ (V/A)')
-RS.mulitply(r'$\alpha$ (V/A)',1e3,replace=True,header=r'$\alpha$ (mV/A)')
-RS.mulitply('Rserr',1e3,replace=True,header='Rserr')
+RS.multiply(r'$\alpha$ (V/A)',1e3,replace=True,header=r'$R_s$ (mV/A)')
+RS.multiply('Rserr',1e3,replace=True,header='Rserr')
 
+'''
 AP = RS.search(r'$\alpha$ (mV/A)',lambda x,y: x<Mean,r'$\alpha$ (mV/A)')
 P = RS.search(r'$\alpha$ (mV/A)',lambda x,y: x>Mean,r'$\alpha$ (mV/A)')
 
@@ -59,7 +60,7 @@ DR = numpy.mean(P)-numpy.mean(AP)
 DRerr = (numpy.std(P)**2+numpy.std(AP)**2)**0.5
 
 print DR,DRerr
-
+'''
 
 
 ################ plot Data ##################
@@ -70,11 +71,17 @@ p.setas="xye"
 p.template=SPF.JTBPlotStyle
 label = '2 K'
 title = ' '
-p.plot(label = label,title=title,figure=1)
+p.plot(label = None,title=title,figure=1,color='k')
+p.show()
 
 
-
-
+q=SP.PlotFile(RS)
+q.setas="xye"
+q.template=SPF.JTBPlotStyle
+label = '2 K'
+title = ' '
+q.plot(label = '5 K',title=title,figure=1,color='k')
+q.show()
 
 
 
